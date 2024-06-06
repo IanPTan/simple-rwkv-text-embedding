@@ -1,0 +1,1 @@
+Download RWKV-4-Pile-430M-20220808-8066.pth from https://huggingface.co/BlinkDL/rwkv-4-pile-430m/tree/main
