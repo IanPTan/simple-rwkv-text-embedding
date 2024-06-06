@@ -19,7 +19,7 @@ git clone https://github.com/IanPatrickMTan/simple-rwkv-text-embedding
 ```
 
 ### 2. Download the RWKV-4 430M Model
-Download the RWKV-4 430M model from [this link](https://huggingface.co/BlinkDL/rwkv-4-pile-430m/tree/main) and place it in the ``model`` directory. If you do not do this the repository does not come with its own model so the script will not work.
+Download the ``RWKV-4-Pile-430M-20220808-8066.pth`` file from [this link](https://huggingface.co/BlinkDL/rwkv-4-pile-430m/tree/main) and place it in the ``model`` directory. If you do not do this the repository does not come with its own model so the script will not work.
 
 ### 3. Create a Virtual Environment (optional but recommended)
 First, enter inside the repository's directory and then create and activate a virtual environment, (this guide assumes Linux is used).
