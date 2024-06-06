@@ -15,7 +15,7 @@ The entire hidden state is not required for the text embedding. Firstly, in orde
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/IanPatrickMTan/simple-rwkv-text-embedding/tree/main
+git clone https://github.com/IanPatrickMTan/simple-rwkv-text-embedding
 ```
 
 ### 2. Download the RWKV-4 430M Model
