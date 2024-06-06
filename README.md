@@ -1,7 +1,7 @@
 # Simple RWKV Text Embedding
 
 ## Introduction
-This repo is just a small minimal test to see how well the RWKV model works for text embedding. The idea is simple. RWKV is fundamentally an RNN architecture and so it stands to reason that it has a statically sized hidden state which acts as the memory of the model and accumilates important information about the text. Hence all one needs to do in order to create a text embedding is to run text through the model and then use the hidden state as the embedding. To setup the repository read [this section](#setup)
+This repo is just a small minimal test to see how well the RWKV model works for text embedding. The idea is simple. RWKV is fundamentally an RNN architecture and so it stands to reason that it has a statically sized hidden state which acts as the memory of the model and accumilates important information about the text. Hence all one needs to do in order to create a text embedding is to run text through the model and then use the hidden state as the embedding. To setup the repository read [this section](#setup).
 
 ## How it works
 
