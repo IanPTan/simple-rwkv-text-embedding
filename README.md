@@ -39,6 +39,9 @@ python main.py
 
 ## Credits
 A lot of code used here was taken and modified from the official ChatRWKV repository and johanwind's RWKV guide. Much love to the RWKV team and I highly recommend reading the RWKV paper.
-https://github.com/BlinkDL/ChatRWKV\
-https://johanwind.github.io/2023/03/23/rwkv_details.html\
-https://arxiv.org/abs/2305.13048\
+<br>
+https://github.com/BlinkDL/ChatRWKV
+<br>
+https://johanwind.github.io/2023/03/23/rwkv_details.html
+<br>
+https://arxiv.org/abs/2305.13048
