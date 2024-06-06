@@ -1,12 +1,13 @@
 import numpy as np
-from torch import load as torch_load  # Only for loading the model weights
-from tokenizers import Tokenizer
+from torch import load as torch_load
+
 
 layer_norm = lambda x, w, b : (x - np.mean(x)) / np.std(x) * w + b
 exp = np.exp
 sigmoid = lambda x : 1/(1 + exp(-x))
 
 def time_mixing(x, last_x, last_num, last_den, decay, bonus, mix_k, mix_v, mix_r, Wk, Wv, Wr, Wout):
+
     k = Wk @ ( x * mix_k + last_x * (1 - mix_k) )
     v = Wv @ ( x * mix_v + last_x * (1 - mix_v) )
     r = Wr @ ( x * mix_r + last_x * (1 - mix_r) )
@@ -20,15 +21,16 @@ def time_mixing(x, last_x, last_num, last_den, decay, bonus, mix_k, mix_v, mix_r
 
     return Wout @ rwkv, (x,num,den)
 
-
 def channel_mixing(x, last_x, mix_k, mix_r, Wk, Wr, Wv):
+
     k = Wk @ ( x * mix_k + last_x * (1 - mix_k) )
     r = Wr @ ( x * mix_r + last_x * (1 - mix_r) )
     vk = Wv @ np.maximum(k, 0)**2
+
     return sigmoid(r) * vk, x
 
+def RWKV(model, token, state, N_LAYER):
 
-def RWKV(model, token, state):
     params = lambda prefix : [model[key] for key in model.keys() if key.startswith(prefix)]
 
     x = params('emb')[0][token]
@@ -51,42 +53,27 @@ def RWKV(model, token, state):
 
     return probs, state
 
-##########################################################################################################
+def load_model(MODEL_FILE, device='cpu'):
 
-def sample_probs(probs, temperature=1.0, top_p=0.85):
-    sorted_probs = np.sort(probs)[::-1]
-    cumulative_probs = np.cumsum(sorted_probs)
-    cutoff = sorted_probs[np.argmax(cumulative_probs > top_p)]
-    probs[probs < cutoff] = 0
-    probs = probs**(1/temperature)
-    return np.random.choice(a=len(probs), p=probs/np.sum(probs))
+    weights = torch_load(MODEL_FILE, map_location=device)
 
+    for k in weights.keys():
+        if '.time_' in k: weights[k] = weights[k].squeeze()
+        weights[k] = weights[k].float().numpy()
 
-# Available at https://huggingface.co/BlinkDL/rwkv-4-pile-430m/resolve/main/RWKV-4-Pile-430M-20220808-8066.pth
-MODEL_FILE = '../model/RWKV-4-Pile-430M-20220808-8066.pth'
-N_LAYER = 24
-N_EMBD = 1024
+    return weights
 
-print(f'\nLoading {MODEL_FILE}')
-weights = torch_load(MODEL_FILE, map_location='cpu')
-for k in weights.keys():
-    if '.time_' in k: weights[k] = weights[k].squeeze()
-    weights[k] = weights[k].float().numpy() # convert to f32 type
+def init_state(N_LAYER, N_EMBD):
 
+    return np.zeros((N_LAYER, 4, N_EMBD), dtype=np.float32)
 
-# Available at https://github.com/BlinkDL/ChatRWKV/blob/main/20B_tokenizer.json
-tokenizer = Tokenizer.from_file("../model/20B_tokenizer.json")
+def embed(text, weights, tokenizer, N_LAYER, N_EMBD):
 
-print(f'\nPreprocessing context')
+    state = init_state(N_LAYER, N_EMBD)
 
-context = "\nIn a shocking finding, scientist discovered a herd of dragons living in a remote, previously unexplored valley, in Tibet. Even more surprising to the researchers was the fact that the dragons spoke perfect Chinese."
+    for token in tokenizer.encode(text).ids:
+        probs, state = RWKV(weights, token, state, N_LAYER)
 
-state = np.zeros((N_LAYER, 4, N_EMBD), dtype=np.float32)
-for token in tokenizer.encode(context).ids:
-    probs, state = RWKV(weights, token, state)
+    embed = state[-1][1] / state[-1][2]
 
-print(context, end="")
-for i in range(100):
-    token = sample_probs(probs)
-    print(tokenizer.decode([token]), end="", flush=True)
-    probs, state = RWKV(weights, token, state)
+    return embed
