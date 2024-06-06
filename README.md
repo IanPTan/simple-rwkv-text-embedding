@@ -37,7 +37,7 @@ pip install -r requirements.txt
 ### 5. Add Your Texts (optional)
 If you have any text you would like to embed please put them in the ``texts.txt`` file before running the script. Please place your pieces of text on seperate lines so that they are turned into seperate embeddings. Right now there is no support for new line characters in your texts so please keep that in mind. Once the script is ran an ``embeddings.nyp`` file will be created where each row contains the vector embedding for each corresponding line in the ``texts.txt`` file.
 <br>
-**IMPORTANT: If you modify the ``tests.txt`` file and would like the embeddings to be regenerated then you must remove the ``embeddings.nyp`` file before running the script by either moving, deleting, or renaming the file.**
+**IMPORTANT: If you modify the ``texts.txt`` file and would like the embeddings to be regenerated then you must remove the ``embeddings.nyp`` file before running the script by either moving, deleting, or renaming the file.**
 
 ### 6. Run the Script
 ```bash
