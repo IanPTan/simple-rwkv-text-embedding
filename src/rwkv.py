@@ -1,6 +1,4 @@
 import numpy as np
-from torch import load as torch_load
-
 
 layer_norm = lambda x, w, b : (x - np.mean(x)) / np.std(x) * w + b
 exp = np.exp
@@ -53,27 +51,3 @@ def RWKV(model, token, state, N_LAYER):
 
     return probs, state
 
-def load_model(MODEL_FILE, device='cpu'):
-
-    weights = torch_load(MODEL_FILE, map_location=device)
-
-    for k in weights.keys():
-        if '.time_' in k: weights[k] = weights[k].squeeze()
-        weights[k] = weights[k].float().numpy()
-
-    return weights
-
-def init_state(N_LAYER, N_EMBD):
-
-    return np.zeros((N_LAYER, 4, N_EMBD), dtype=np.float32)
-
-def embed(text, weights, tokenizer, N_LAYER, N_EMBD):
-
-    state = init_state(N_LAYER, N_EMBD)
-
-    for token in tokenizer.encode(text).ids:
-        probs, state = RWKV(weights, token, state, N_LAYER)
-
-    embed = state[-1][1] / state[-1][2]
-
-    return embed
